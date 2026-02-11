@@ -238,7 +238,7 @@
     /* ===== MATRIX GRID (Safari+Chrome consistent) ===== */
     .matrixGridHead{
       display:grid;
-      grid-template-columns: 1.6fr 1.6fr 1.5fr; /* Start / End wider than £/asset */
+      grid-template-columns: 1.6fr 1.6fr 1.5fr; /* Start / End wider than £/asset (YOUR SETTING) */
       gap: var(--matrixGapX);
       padding: 6px 4px 10px;
       border-bottom: 1px solid rgba(230,0,122,.12);
@@ -255,7 +255,7 @@
 
     .matrixRowItem{
       display:grid;
-      grid-template-columns: 1.6fr 1.6fr 1.5fr;
+      grid-template-columns: 1.6fr 1.6fr 1.5fr; /* Start / End wider than £/asset (YOUR SETTING) */
       gap: var(--matrixGapX);
       align-items:center;
     }
@@ -370,6 +370,18 @@
         <div class="pillValue" id="cpaOut">£0</div>
       </div>
 
+      <!-- TOTAL COST ($) -->
+      <div class="pillRow">
+        <div class="pillLabel">TOTAL COST ($)</div>
+        <div class="pillValue" id="totalOutUsd">$0</div>
+      </div>
+
+      <!-- AVERAGE CPA ($) -->
+      <div class="pillRow">
+        <div class="pillLabel">AVERAGE CPA ($)</div>
+        <div class="pillValue" id="cpaOutUsd">$0</div>
+      </div>
+
       <!-- ADVANCED: EDIT MATRICES -->
       <details>
         <summary>Edit matrices</summary>
@@ -438,10 +450,16 @@
 
     const $ = (id) => document.getElementById(id);
 
-    function money(n){
+    function moneyGBP(n){
       if (!isFinite(n)) return "£—";
       const v = Math.round(n * 100) / 100;
       return "£" + v.toLocaleString(undefined, { maximumFractionDigits: 2 });
+    }
+
+    function moneyUSD(n){
+      if (!isFinite(n)) return "$—";
+      const v = Math.round(n * 100) / 100;
+      return "$" + v.toLocaleString(undefined, { maximumFractionDigits: 2 });
     }
 
     function isBlank(v){
@@ -523,6 +541,25 @@
       return total;
     }
 
+    // ---- FX: GBP -> USD (cached per session) ----
+    let fxGBPtoUSD = null;
+
+    async function getGBPtoUSD(){
+      if (fxGBPtoUSD) return fxGBPtoUSD;
+      try {
+        // Base USD; invert GBP to get GBP->USD
+        const res = await fetch("https://open.er-api.com/v6/latest/USD", { cache: "no-store" });
+        const data = await res.json();
+        const usdToGbp = data?.rates?.GBP;
+        if (!usdToGbp || !isFinite(usdToGbp)) throw new Error("Bad FX payload");
+        fxGBPtoUSD = 1 / usdToGbp;
+        return fxGBPtoUSD;
+      } catch {
+        fxGBPtoUSD = null;
+        return null;
+      }
+    }
+
     function renderMatrix(which){
       const host = $(which === "A" ? "matrixA" : "matrixB");
       const mat = which === "A" ? matrixA : matrixB;
@@ -565,7 +602,7 @@
       box.textContent = errors[0];
     }
 
-    function recalc(){
+    async function recalc(){
       const assets = $("assetsInput").value;
       const mat = (selected === "A") ? matrixA : matrixB;
 
@@ -575,15 +612,27 @@
       if (!v.ok){
         $("totalOut").textContent = "£—";
         $("cpaOut").textContent = "£—";
+        $("totalOutUsd").textContent = "$—";
+        $("cpaOutUsd").textContent = "$—";
         return;
       }
 
-      const total = calcTotal(assets, mat);
+      const totalGBP = calcTotal(assets, mat);
       const n = Math.max(0, Math.trunc(Number(assets) || 0));
-      const cpa = (n > 0) ? (total / n) : 0;
+      const cpaGBP = (n > 0) ? (totalGBP / n) : 0;
 
-      $("totalOut").textContent = money(total);
-      $("cpaOut").textContent = money(cpa);
+      $("totalOut").textContent = moneyGBP(totalGBP);
+      $("cpaOut").textContent = moneyGBP(cpaGBP);
+
+      const rate = await getGBPtoUSD();
+      if (!rate){
+        $("totalOutUsd").textContent = "$—";
+        $("cpaOutUsd").textContent = "$—";
+        return;
+      }
+
+      $("totalOutUsd").textContent = moneyUSD(totalGBP * rate);
+      $("cpaOutUsd").textContent = moneyUSD(cpaGBP * rate);
     }
 
     function setSelected(val){
@@ -598,7 +647,7 @@
       setSelected(btn.dataset.set);
     });
 
-    $("assetsInput").addEventListener("input", recalc);
+    $("assetsInput").addEventListener("input", () => recalc());
 
     document.querySelectorAll("[data-add]").forEach(btn => {
       btn.addEventListener("click", () => {
@@ -620,6 +669,7 @@
       });
     });
 
+    // init
     renderMatrix("A");
     renderMatrix("B");
     setSelected("A");
