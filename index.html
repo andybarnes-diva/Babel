@@ -21,11 +21,15 @@
       --stroke: 2px;
       --gap: 16px;
 
-      /* widget sizing */
       --w: 520px;
       --rowH: 68px;
       --rowPadX: 22px;
       --rightW: 210px;
+
+      /* matrix field style */
+      --fieldH: 40px;
+      --fieldR: 12px;   /* small radius = “rectangular” */
+      --fieldB: 2px;
     }
 
     *{ box-sizing:border-box; }
@@ -163,8 +167,6 @@
     }
 
     .toggle[data-value="B"] .toggleKnob{ transform: translateX(100%); }
-
-    /* Active label (on white) = pink; inactive label (on pink) = white */
     .toggle[data-value="A"] .btnA,
     .toggle[data-value="B"] .btnB{ color: var(--pink); }
     .toggle[data-value="A"] .btnB,
@@ -231,38 +233,43 @@
       font-size: 14px;
     }
 
+    /* TABLE: spacing so fields don't join up */
     .advCard table{
       width:100%;
-      border-collapse:collapse;
+      border-collapse: separate;   /* IMPORTANT: separate borders */
+      border-spacing: 10px 12px;   /* IMPORTANT: gaps between fields */
       font-size: 12px;
       color: #7a2a55;
-      table-layout: fixed; /* CRITICAL: stable column widths */
+      table-layout: fixed;
     }
-    .advCard th, .advCard td{
-      text-align:left;
-      padding: 7px 5px;
+
+    .advCard thead th{
       border-bottom: 1px solid rgba(230,0,122,.12);
-      vertical-align: middle;
-    }
-    .advCard th{
-      font-weight: 900;
+      padding: 6px 2px 10px;
       color: #a00057;
+      font-weight: 900;
+      text-align: left;
     }
 
-    /* Start/End need to fit 1500+; £/asset is capped, so make Start/End wider */
-    .advCard th:nth-child(1), .advCard td:nth-child(1){ width: 38%; }
-    .advCard th:nth-child(2), .advCard td:nth-child(2){ width: 38%; }
-    .advCard th:nth-child(3), .advCard td:nth-child(3){ width: 24%; }
+    .advCard tbody td{
+      padding: 0;                  /* inputs handle padding */
+      border: none;                /* stop row rules */
+    }
 
-    /* Matrix input pills (Safari/iOS safe + no truncation) */
+    /* Column widths: Start/End bigger than £/asset */
+    .advCard th:nth-child(1), .advCard td:nth-child(1){ width: 40%; }
+    .advCard th:nth-child(2), .advCard td:nth-child(2){ width: 40%; }
+    .advCard th:nth-child(3), .advCard td:nth-child(3){ width: 20%; }
+
+    /* RECTANGULAR inputs (Safari/iOS safe) */
     input.tier{
       width: 100%;
-      height: 40px;
-      padding: 6px 14px;
-
+      height: var(--fieldH);
+      padding: 6px 10px;
       background: #fff;
-      border-radius: 999px;
-      border: 2px solid rgba(230,0,122,.20);
+
+      border-radius: var(--fieldR);
+      border: var(--fieldB) solid rgba(230,0,122,.20);
       outline:none;
 
       font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
@@ -270,31 +277,35 @@
       font-size: 14px;
       color:#5b5b5b;
 
-      text-align: center;
+      text-align: left;
       font-variant-numeric: tabular-nums;
-      box-sizing: border-box;
 
       -webkit-appearance: none;
       appearance: none;
+      box-sizing: border-box;
     }
 
-    /* Remove number spinners that break layout */
+    /* Remove number spinners */
     input.tier::-webkit-outer-spin-button,
     input.tier::-webkit-inner-spin-button{
       -webkit-appearance: none;
       margin: 0;
     }
-    input.tier[type="number"]{
-      -moz-appearance: textfield;
+    input.tier[type="number"]{ -moz-appearance: textfield; }
+
+    /* Placeholder for ∞ */
+    input.tier::placeholder{
+      color: rgba(91,91,91,.55);
+      font-weight: 700;
     }
 
-    /* Ensure Start/End pills are never too narrow */
+    /* Ensure Start/End can show 1500+ comfortably */
     .advCard td:nth-child(1) input.tier,
     .advCard td:nth-child(2) input.tier{
-      min-width: 110px;
+      min-width: 120px;
     }
     .advCard td:nth-child(3) input.tier{
-      min-width: 90px;
+      min-width: 80px;
     }
 
     .btnRow{
@@ -315,6 +326,7 @@
       font-size: 12px;
     }
     .smallBtn:hover{ background: rgba(230,0,122,.12); }
+
     .note{
       margin-top: 8px;
       font-size: 11px;
@@ -405,7 +417,7 @@
 
         <div class="note">
           Pricing is applied “tax-style”: each tier only applies to the assets within its range.
-          Leave <b>End</b> blank for “no upper limit” (∞). Tiers must not overlap.
+          Leave End blank for “no upper limit” (∞). Tiers must not overlap.
         </div>
         <div class="error" id="errBox">Fix matrix issues before totals can be calculated.</div>
       </details>
@@ -449,8 +461,7 @@
 
     function parseIntStrict(v){
       if (typeof v === "number" && Number.isFinite(v)) return Math.trunc(v);
-      if (typeof v !== "string") v = String(v ?? "");
-      const s = v.trim();
+      const s = String(v ?? "").trim();
       if (s === "") return null;
       if (!/^\d+$/.test(s)) return NaN;
       return parseInt(s, 10);
@@ -458,8 +469,7 @@
 
     function parseNumStrict(v){
       if (typeof v === "number" && Number.isFinite(v)) return v;
-      if (typeof v !== "string") v = String(v ?? "");
-      const s = v.trim();
+      const s = String(v ?? "").trim();
       if (s === "") return null;
       const n = Number(s);
       return Number.isFinite(n) ? n : NaN;
@@ -472,8 +482,7 @@
         const start = parseIntStrict(t.start);
         const end = isBlank(t.end) ? null : parseIntStrict(t.end);
         const rate = parseNumStrict(t.rate);
-
-        return { start, end, rate, rawEnd: t.end };
+        return { start, end, rate };
       });
 
       cleaned.forEach((t, idx) => {
@@ -542,8 +551,6 @@
       mat.forEach((t, idx) => {
         const tr = document.createElement("tr");
 
-        // Start + Rate are numbers.
-        // End is TEXT so the ∞ placeholder actually shows and you can leave it blank for "no upper limit".
         tr.innerHTML = `
           <td><input class="tier" type="number" min="1" step="1" value="${t.start}" data-m="${which}" data-i="${idx}" data-f="start"></td>
           <td><input class="tier" type="text" inputmode="numeric" pattern="[0-9]*" value="${t.end ?? ""}" placeholder="∞" data-m="${which}" data-i="${idx}" data-f="end"></td>
@@ -560,7 +567,7 @@
           const v = e.target.value;
 
           const target = (m === "A") ? matrixA : matrixB;
-          target[i][f] = (f === "end" && v.trim() === "") ? null : v;
+          target[i][f] = (f === "end" && String(v).trim() === "") ? null : v;
 
           recalc();
         });
@@ -575,7 +582,7 @@
         return;
       }
       box.style.display = "block";
-      box.textContent = errors[0]; // keep it simple: show first error only
+      box.textContent = errors[0];
     }
 
     function recalc(){
@@ -617,12 +624,7 @@
       btn.addEventListener("click", () => {
         const which = btn.dataset.add;
         const mat = (which === "A") ? matrixA : matrixB;
-
-        // sensible default new tier
-        const last = mat.slice().sort((a,b) => parseIntStrict(a.start) - parseIntStrict(b.start)).at(-1);
-        const nextStart = last ? (parseIntStrict(last.end ?? last.start) + 1 || (parseIntStrict(last.start) + 1)) : 1;
-
-        mat.push({ start: nextStart, end: null, rate: 0 });
+        mat.push({ start: 1, end: null, rate: 0 });
         renderMatrix(which);
         recalc();
       });
