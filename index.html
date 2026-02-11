@@ -26,10 +26,12 @@
       --rowPadX: 22px;
       --rightW: 210px;
 
-      /* matrix field style */
+      /* matrix */
       --fieldH: 40px;
-      --fieldR: 12px;   /* small radius = “rectangular” */
+      --fieldR: 10px;
       --fieldB: 2px;
+      --matrixGapX: 12px;
+      --matrixGapY: 14px;
     }
 
     *{ box-sizing:border-box; }
@@ -233,89 +235,74 @@
       font-size: 14px;
     }
 
-/* ===== MATRIX TABLE (separate rectangular fields) ===== */
-.advCard table{
-  width:100%;
-  table-layout: fixed;
+    /* ===== MATRIX GRID (Safari+Chrome consistent) ===== */
+    .matrixGridHead{
+      display:grid;
+      grid-template-columns: 2fr 2fr 1fr; /* Start / End wider than £/asset */
+      gap: var(--matrixGapX);
+      padding: 6px 4px 10px;
+      border-bottom: 1px solid rgba(230,0,122,.12);
+      color: #a00057;
+      font-weight: 900;
+    }
 
-  /* FORCE spacing between columns/rows */
-  border-collapse: separate !important;
-  border-spacing: 12px 14px !important;
+    .matrixRows{
+      display:flex;
+      flex-direction:column;
+      gap: var(--matrixGapY);
+      padding-top: 14px;
+    }
 
-  font-size: 12px;
-  color: #7a2a55;
-}
+    .matrixRowItem{
+      display:grid;
+      grid-template-columns: 2fr 2fr 1fr;
+      gap: var(--matrixGapX);
+      align-items:center;
+    }
 
-/* Headings */
-.advCard thead th{
-  padding: 6px 4px 10px;
-  text-align: left;
-  font-weight: 900;
-  color: #a00057;
-  border-bottom: 1px solid rgba(230,0,122,.12);
-}
+    input.tier{
+      width: 100%;
+      height: var(--fieldH);
+      padding: 8px 10px;
+      background: #fff;
 
-/* Body cells must not add padding that "glues" fields together */
-.advCard tbody td{
-  padding: 0 !important;
-  border: none !important;
-}
+      border-radius: var(--fieldR);
+      border: var(--fieldB) solid rgba(230,0,122,.20);
+      outline:none;
 
-/* Column widths: Start/End wider than £/asset */
-.advCard th:nth-child(1),
-.advCard td:nth-child(1){ width: 40%; }
+      font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      font-weight: 700;
+      font-size: 14px;
+      color:#5b5b5b;
 
-.advCard th:nth-child(2),
-.advCard td:nth-child(2){ width: 40%; }
+      text-align: left;
+      font-variant-numeric: tabular-nums;
 
-.advCard th:nth-child(3),
-.advCard td:nth-child(3){ width: 20%; }
+      -webkit-appearance: none;
+      appearance: none;
+      box-sizing: border-box;
+    }
 
-/* Rectangular input fields (slightly rounded corners) */
-.advCard input.tier{
-  width: 100%;
-  height: 40px;
-  padding: 8px 10px;
+    /* Remove number spinners */
+    input.tier::-webkit-outer-spin-button,
+    input.tier::-webkit-inner-spin-button{
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input.tier[type="number"]{ -moz-appearance: textfield; }
 
-  background: #fff;
-  border: 2px solid rgba(230,0,122,.20);
-  border-radius: 10px; /* rectangular, not pill */
-  outline: none;
-
-  font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-  font-weight: 700;
-  font-size: 14px;
-  color: #5b5b5b;
-
-  text-align: left;
-  font-variant-numeric: tabular-nums;
-
-  -webkit-appearance: none;
-  appearance: none;
-  box-sizing: border-box;
-}
-
-/* Kill number spinners */
-.advCard input.tier::-webkit-outer-spin-button,
-.advCard input.tier::-webkit-inner-spin-button{
-  -webkit-appearance: none;
-  margin: 0;
-}
-.advCard input.tier[type="number"]{
-  -moz-appearance: textfield;
-}
-
-/* Make ∞ placeholder visible */
-.advCard input.tier::placeholder{
-  color: rgba(91,91,91,.55);
-}
+    input.tier::placeholder{
+      color: rgba(91,91,91,.55);
+      font-weight: 700;
+    }
 
     .btnRow{
       display:flex;
       gap:8px;
       flex-wrap:wrap;
-      margin-top: 8px;
+      margin-top: 14px;
     }
+
     .smallBtn{
       border-radius: 999px;
       border: 2px solid rgba(230,0,122,.35);
@@ -390,12 +377,13 @@
         <div class="advGrid">
           <div class="advCard">
             <div class="advTitle">Matrix A (tiered, progressive)</div>
-            <table>
-              <thead>
-                <tr><th>Start</th><th>End</th><th>£/asset</th></tr>
-              </thead>
-              <tbody id="matrixA"></tbody>
-            </table>
+
+            <div class="matrixGridHead">
+              <div>Start</div><div>End</div><div>£/asset</div>
+            </div>
+
+            <div class="matrixRows" id="matrixA"></div>
+
             <div class="btnRow">
               <button class="smallBtn" data-add="A">+ Add tier</button>
               <button class="smallBtn" data-reset="A">Reset A</button>
@@ -404,12 +392,13 @@
 
           <div class="advCard">
             <div class="advTitle">Matrix B (tiered, progressive)</div>
-            <table>
-              <thead>
-                <tr><th>Start</th><th>End</th><th>£/asset</th></tr>
-              </thead>
-              <tbody id="matrixB"></tbody>
-            </table>
+
+            <div class="matrixGridHead">
+              <div>Start</div><div>End</div><div>£/asset</div>
+            </div>
+
+            <div class="matrixRows" id="matrixB"></div>
+
             <div class="btnRow">
               <button class="smallBtn" data-add="B">+ Add tier</button>
               <button class="smallBtn" data-reset="B">Reset B</button>
@@ -427,7 +416,6 @@
   </div>
 
   <script>
-    // Matrix A
     const DEFAULT_A = [
       { start: 1, end: 25, rate: 345 },
       { start: 26, end: 500, rate: 40 },
@@ -436,7 +424,6 @@
       { start: 1501, end: null, rate: 20 }
     ];
 
-    // Matrix B
     const DEFAULT_B = [
       { start: 1, end: 25, rate: 345 },
       { start: 26, end: 500, rate: 45 },
@@ -479,7 +466,6 @@
 
     function validate(mat){
       const errors = [];
-
       const cleaned = mat.map((t) => {
         const start = parseIntStrict(t.start);
         const end = isBlank(t.end) ? null : parseIntStrict(t.end);
@@ -488,22 +474,14 @@
       });
 
       cleaned.forEach((t, idx) => {
-        if (!Number.isInteger(t.start) || t.start < 1){
-          errors.push(`Tier ${idx+1}: Start must be a positive integer.`);
-        }
+        if (!Number.isInteger(t.start) || t.start < 1) errors.push(`Tier ${idx+1}: Start must be a positive integer.`);
         if (t.end !== null){
-          if (!Number.isInteger(t.end)){
-            errors.push(`Tier ${idx+1}: End must be blank (∞) or a whole number.`);
-          } else if (t.end < t.start){
-            errors.push(`Tier ${idx+1}: End must be ≥ Start.`);
-          }
+          if (!Number.isInteger(t.end)) errors.push(`Tier ${idx+1}: End must be blank (∞) or a whole number.`);
+          else if (t.end < t.start) errors.push(`Tier ${idx+1}: End must be ≥ Start.`);
         }
-        if (t.rate === null || Number.isNaN(t.rate) || t.rate < 0){
-          errors.push(`Tier ${idx+1}: £/asset must be a non-negative number.`);
-        }
+        if (t.rate === null || Number.isNaN(t.rate) || t.rate < 0) errors.push(`Tier ${idx+1}: £/asset must be a non-negative number.`);
       });
 
-      // overlap check
       const sorted = cleaned
         .filter(t => Number.isInteger(t.start))
         .slice()
@@ -546,22 +524,22 @@
     }
 
     function renderMatrix(which){
-      const tbody = $(which === "A" ? "matrixA" : "matrixB");
+      const host = $(which === "A" ? "matrixA" : "matrixB");
       const mat = which === "A" ? matrixA : matrixB;
-      tbody.innerHTML = "";
+      host.innerHTML = "";
 
       mat.forEach((t, idx) => {
-        const tr = document.createElement("tr");
-
-        tr.innerHTML = `
-          <td><input class="tier" type="number" min="1" step="1" value="${t.start}" data-m="${which}" data-i="${idx}" data-f="start"></td>
-          <td><input class="tier" type="text" inputmode="numeric" pattern="[0-9]*" value="${t.end ?? ""}" placeholder="∞" data-m="${which}" data-i="${idx}" data-f="end"></td>
-          <td><input class="tier" type="number" min="0" step="0.01" value="${t.rate}" data-m="${which}" data-i="${idx}" data-f="rate"></td>
+        const row = document.createElement("div");
+        row.className = "matrixRowItem";
+        row.innerHTML = `
+          <input class="tier" type="number" min="1" step="1" value="${t.start}" data-m="${which}" data-i="${idx}" data-f="start">
+          <input class="tier" type="text" inputmode="numeric" pattern="[0-9]*" value="${t.end ?? ""}" placeholder="∞" data-m="${which}" data-i="${idx}" data-f="end">
+          <input class="tier" type="number" min="0" step="0.01" value="${t.rate}" data-m="${which}" data-i="${idx}" data-f="rate">
         `;
-        tbody.appendChild(tr);
+        host.appendChild(row);
       });
 
-      tbody.querySelectorAll("input.tier").forEach(inp => {
+      host.querySelectorAll("input.tier").forEach(inp => {
         inp.addEventListener("input", (e) => {
           const m = e.target.dataset.m;
           const i = Number(e.target.dataset.i);
@@ -642,7 +620,6 @@
       });
     });
 
-    // init
     renderMatrix("A");
     renderMatrix("B");
     setSelected("A");
