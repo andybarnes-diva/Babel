@@ -233,80 +233,82 @@
       font-size: 14px;
     }
 
-    /* TABLE: spacing so fields don't join up */
-    .advCard table{
-      width:100%;
-      border-collapse: separate;   /* IMPORTANT: separate borders */
-      border-spacing: 10px 12px;   /* IMPORTANT: gaps between fields */
-      font-size: 12px;
-      color: #7a2a55;
-      table-layout: fixed;
-    }
+/* ===== MATRIX TABLE (separate rectangular fields) ===== */
+.advCard table{
+  width:100%;
+  table-layout: fixed;
 
-    .advCard thead th{
-      border-bottom: 1px solid rgba(230,0,122,.12);
-      padding: 6px 2px 10px;
-      color: #a00057;
-      font-weight: 900;
-      text-align: left;
-    }
+  /* FORCE spacing between columns/rows */
+  border-collapse: separate !important;
+  border-spacing: 12px 14px !important;
 
-    .advCard tbody td{
-      padding: 0;                  /* inputs handle padding */
-      border: none;                /* stop row rules */
-    }
+  font-size: 12px;
+  color: #7a2a55;
+}
 
-    /* Column widths: Start/End bigger than £/asset */
-    .advCard th:nth-child(1), .advCard td:nth-child(1){ width: 40%; }
-    .advCard th:nth-child(2), .advCard td:nth-child(2){ width: 40%; }
-    .advCard th:nth-child(3), .advCard td:nth-child(3){ width: 20%; }
+/* Headings */
+.advCard thead th{
+  padding: 6px 4px 10px;
+  text-align: left;
+  font-weight: 900;
+  color: #a00057;
+  border-bottom: 1px solid rgba(230,0,122,.12);
+}
 
-    /* RECTANGULAR inputs (Safari/iOS safe) */
-    input.tier{
-      width: 100%;
-      height: var(--fieldH);
-      padding: 6px 10px;
-      background: #fff;
+/* Body cells must not add padding that "glues" fields together */
+.advCard tbody td{
+  padding: 0 !important;
+  border: none !important;
+}
 
-      border-radius: var(--fieldR);
-      border: var(--fieldB) solid rgba(230,0,122,.20);
-      outline:none;
+/* Column widths: Start/End wider than £/asset */
+.advCard th:nth-child(1),
+.advCard td:nth-child(1){ width: 40%; }
 
-      font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      font-weight: 700;
-      font-size: 14px;
-      color:#5b5b5b;
+.advCard th:nth-child(2),
+.advCard td:nth-child(2){ width: 40%; }
 
-      text-align: left;
-      font-variant-numeric: tabular-nums;
+.advCard th:nth-child(3),
+.advCard td:nth-child(3){ width: 20%; }
 
-      -webkit-appearance: none;
-      appearance: none;
-      box-sizing: border-box;
-    }
+/* Rectangular input fields (slightly rounded corners) */
+.advCard input.tier{
+  width: 100%;
+  height: 40px;
+  padding: 8px 10px;
 
-    /* Remove number spinners */
-    input.tier::-webkit-outer-spin-button,
-    input.tier::-webkit-inner-spin-button{
-      -webkit-appearance: none;
-      margin: 0;
-    }
-    input.tier[type="number"]{ -moz-appearance: textfield; }
+  background: #fff;
+  border: 2px solid rgba(230,0,122,.20);
+  border-radius: 10px; /* rectangular, not pill */
+  outline: none;
 
-    /* Placeholder for ∞ */
-    input.tier::placeholder{
-      color: rgba(91,91,91,.55);
-      font-weight: 700;
-    }
+  font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  font-weight: 700;
+  font-size: 14px;
+  color: #5b5b5b;
 
-    /* Ensure Start/End can show 1500+ comfortably */
-    .advCard td:nth-child(1) input.tier,
-    .advCard td:nth-child(2) input.tier{
-      min-width: 120px;
-    }
-    .advCard td:nth-child(3) input.tier{
-      min-width: 80px;
-    }
+  text-align: left;
+  font-variant-numeric: tabular-nums;
+
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+}
+
+/* Kill number spinners */
+.advCard input.tier::-webkit-outer-spin-button,
+.advCard input.tier::-webkit-inner-spin-button{
+  -webkit-appearance: none;
+  margin: 0;
+}
+.advCard input.tier[type="number"]{
+  -moz-appearance: textfield;
+}
+
+/* Make ∞ placeholder visible */
+.advCard input.tier::placeholder{
+  color: rgba(91,91,91,.55);
+}
 
     .btnRow{
       display:flex;
