@@ -111,58 +111,79 @@
       background: transparent;
     }
 
-    /* Matrix row special: label + toggle pill */
-    .matrixRow{
-      display:flex;
-      align-items:center;
-      gap: 12px;
-      width:100%;
-    }
-    .matrixRow .pillLabel{ flex: 1 1 auto; }
+/* Matrix row special: label + toggle pill */
+.matrixRow{
+  display:flex;
+  align-items:center;
+  gap: 12px;
+  width:100%;
+}
+.matrixRow .pillLabel{
+  flex: 1 1 auto;
+}
 
-    .toggle{
-      flex: 0 0 auto;
-      height: calc(var(--rowH) - 12px);
-      width: 210px;
-      border-radius: var(--radius);
-      border: var(--stroke) solid var(--pink);
-      background: var(--pink);
-      display:flex;
-      align-items:center;
-      padding: 6px;
-      position:relative;
-      overflow:hidden;
-    }
-    .toggleBtn{
-      flex: 1 1 50%;
-      height: 100%;
-      border-radius: var(--radius);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight: 900;
-      font-size: 24px;
-      cursor:pointer;
-      user-select:none;
-      transition: color .15s ease;
-      color: var(--white);
-    }
-    .toggleKnob{
-      position:absolute;
-      top: 6px;
-      left: 6px;
-      width: calc(50% - 6px);
-      height: calc(100% - 12px);
-      background: var(--white);
-      border-radius: var(--radius);
-      transition: transform .18s ease;
-      box-shadow: 0 10px 20px rgba(0,0,0,.08);
-    }
-    .toggle[data-value="B"] .toggleKnob{ transform: translateX(100%); }
-    .toggle[data-value="A"] .btnA,
-    .toggle[data-value="B"] .btnB{ color: var(--pink); }
-    .toggle[data-value="A"] .btnB,
-    .toggle[data-value="B"] .btnA{ color: var(--white); }
+/* Toggle container */
+.toggle{
+  flex: 0 0 auto;
+  height: calc(var(--rowH) - 12px);
+  width: 210px;
+  border-radius: var(--radius);
+  border: var(--stroke) solid var(--pink);
+  background: var(--pink);
+  display:flex;
+  align-items:center;
+  padding: 6px;
+  position:relative;
+  overflow:hidden;
+}
+
+/* Toggle labels (default = white on pink) */
+.toggleBtn{
+  flex: 1 1 50%;
+  height: 100%;
+  border-radius: var(--radius);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight: 900;
+  font-size: 24px;
+  cursor:pointer;
+  user-select:none;
+  transition: color .15s ease;
+  color: var(--white);
+  z-index: 2; /* ensure text sits above white pill */
+}
+
+/* White sliding pill */
+.toggleKnob{
+  position:absolute;
+  top: 6px;
+  left: 6px;
+  width: calc(50% - 6px);
+  height: calc(100% - 12px);
+  background: var(--white);
+  border-radius: var(--radius);
+  transition: transform .18s ease;
+  box-shadow: 0 10px 20px rgba(0,0,0,.08);
+  z-index: 1;
+}
+
+/* Move pill */
+.toggle[data-value="B"] .toggleKnob{
+  transform: translateX(100%);
+}
+
+/* Active label = pink (inside white pill) */
+.toggle[data-value="A"] .btnA,
+.toggle[data-value="B"] .btnB{
+  color: var(--pink);
+}
+
+/* Inactive label = white (on pink background) */
+.toggle[data-value="A"] .btnB,
+.toggle[data-value="B"] .btnA{
+  color: var(--white);
+}
 
     /* Bottom “advanced” panel */
     details{
