@@ -260,16 +260,36 @@
     }
     th{ font-weight: 900; color: #a00057; }
 
- input.tier{
+  /* Give Start/End columns enough room for 4 digits */
+.advCard table th:nth-child(1),
+.advCard table td:nth-child(1),
+.advCard table th:nth-child(2),
+.advCard table td:nth-child(2){
+  width: 28%;
+}
+
+/* Let £/asset be a bit wider too */
+.advCard table th:nth-child(3),
+.advCard table td:nth-child(3){
+  width: 44%;
+}
+
+input.tier{
   width: 100%;
-  min-height: 36px;
+  min-height: 40px;
   padding: 8px 12px;
+
+  /* THIS is the fix */
+  text-align: center;     /* keep the nice centred look */
+  letter-spacing: 0.2px;
+  font-variant-numeric: tabular-nums;
+
   line-height: 1.2;
   border-radius: 14px;
   border: 2px solid rgba(230,0,122,.20);
   outline:none;
   font-weight: 700;
-  font-size: 13px;
+  font-size: 14px;        /* slightly larger but readable */
   color:#5b5b5b;
   font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
   box-sizing: border-box;
