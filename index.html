@@ -1,361 +1,648 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>The Babelator</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>The Babelator</title>
 
-<!-- Poppins -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
 
-<style>
-:root{
-  --pink:#e6007a;
-  --white:#ffffff;
-  --grey:#5b5b5b;
-  --shadow:0 14px 30px rgba(0,0,0,.08);
-  --radius:999px;
-  --stroke:2px;
-  --w:520px;
-  --rowH:68px;
-  --rightW:210px;
-}
+  <style>
+    :root{
+      --pink:#e6007a;
+      --white:#ffffff;
+      --grey:#5b5b5b;
+      --bg:#ffffff;
+      --shadow: 0 14px 30px rgba(0,0,0,.08);
+      --radius: 999px;
+      --stroke: 2px;
+      --gap: 16px;
 
-*{box-sizing:border-box}
+      /* widget sizing */
+      --w: 520px;
+      --rowH: 68px;
+      --rowPadX: 22px;
+      --rightW: 210px;
+    }
 
-body{
-  margin:0;
-  font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-  background:#fff;
-  color:var(--pink);
-}
+    *{ box-sizing:border-box; }
 
-.wrap{
-  max-width:var(--w);
-  margin:26px auto 44px;
-  padding:0 14px;
-}
+    body{
+      margin:0;
+      background: var(--bg);
+      font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color: var(--pink);
+    }
 
-.titleCapsule{
-  border:var(--stroke) solid var(--pink);
-  border-radius:var(--radius);
-  padding:16px 18px;
-  text-align:center;
-  font-weight:900;
-  font-size:34px;
-  margin-bottom:18px;
-  box-shadow:var(--shadow);
-}
+    .wrap{
+      max-width: var(--w);
+      margin: 26px auto 44px;
+      padding: 0 14px;
+    }
 
-.stack{display:flex;flex-direction:column;gap:16px}
+    .titleCapsule{
+      border: var(--stroke) solid var(--pink);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      text-align:center;
+      letter-spacing: 1px;
+      font-weight: 900;
+      font-size: 34px;
+      color: var(--pink);
+      margin-bottom: 18px;
+      box-shadow: var(--shadow);
+    }
 
-.pillRow{
-  height:var(--rowH);
-  background:var(--pink);
-  border-radius:var(--radius);
-  display:flex;
-  align-items:center;
-  padding:0 10px 0 22px;
-  box-shadow:var(--shadow);
-}
+    .stack{ display:flex; flex-direction:column; gap: var(--gap); }
 
-.pillLabel{
-  font-weight:900;
-  color:#fff;
-  font-size:26px;
-  white-space:nowrap;
-}
+    .pillRow{
+      position:relative;
+      height: var(--rowH);
+      border-radius: var(--radius);
+      background: var(--pink);
+      box-shadow: var(--shadow);
+      display:flex;
+      align-items:center;
+      padding-left: var(--rowPadX);
+      padding-right: 10px;
+      overflow:hidden;
+    }
 
-.pillValue{
-  margin-left:auto;
-  height:calc(var(--rowH) - 12px);
-  width:var(--rightW);
-  background:#fff;
-  border-radius:var(--radius);
-  border:var(--stroke) solid var(--pink);
-  display:flex;
-  align-items:center;
-  justify-content:flex-end;
-  padding:0 16px;
-  font-weight:900;
-  font-size:26px;
-  color:var(--grey);
-}
+    .pillLabel{
+      font-weight: 900;
+      color: var(--white);
+      font-size: 26px;
+      letter-spacing: .3px;
+      line-height: 1;
+      user-select:none;
+      white-space: nowrap;
+    }
 
-.pillValue input{
-  width:100%;
-  border:none;
-  outline:none;
-  background:transparent;
-  font:inherit;
-  text-align:right;
-}
+    .pillValue{
+      margin-left:auto;
+      height: calc(var(--rowH) - 12px);
+      width: min(280px, var(--rightW));
+      background: var(--white);
+      border-radius: var(--radius);
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      padding: 0 16px;
+      border: var(--stroke) solid var(--pink);
+      color: var(--grey);
+      font-weight: 900;
+      font-size: 26px;
+      line-height:1;
+    }
 
-/* MATRIX TOGGLE */
-.matrixRow{display:flex;align-items:center;width:100%;gap:12px}
-.matrixRow .pillLabel{flex:1}
+    .pillValue input{
+      width:100%;
+      border:none;
+      outline:none;
+      font: inherit;
+      color: var(--grey);
+      text-align:right;
+      background: transparent;
+      -webkit-appearance: none;
+      appearance: none;
+    }
 
-.toggle{
-  height:calc(var(--rowH) - 12px);
-  width:210px;
-  background:var(--pink);
-  border:var(--stroke) solid var(--pink);
-  border-radius:var(--radius);
-  display:flex;
-  align-items:center;
-  padding:6px;
-  position:relative;
-}
+    /* Matrix row special: label + toggle pill */
+    .matrixRow{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+      width:100%;
+    }
+    .matrixRow .pillLabel{ flex: 1 1 auto; }
 
-.toggleBtn{
-  flex:1;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:24px;
-  font-weight:900;
-  color:#fff;
-  cursor:pointer;
-  z-index:2;
-}
+    .toggle{
+      flex: 0 0 auto;
+      height: calc(var(--rowH) - 12px);
+      width: 210px;
+      border-radius: var(--radius);
+      border: var(--stroke) solid var(--pink);
+      background: var(--pink);
+      display:flex;
+      align-items:center;
+      padding: 6px;
+      position:relative;
+      overflow:hidden;
+    }
 
-.toggleKnob{
-  position:absolute;
-  top:6px;
-  left:6px;
-  width:calc(50% - 6px);
-  height:calc(100% - 12px);
-  background:#fff;
-  border-radius:var(--radius);
-  transition:.18s;
-  z-index:1;
-}
+    .toggleBtn{
+      flex: 1 1 50%;
+      height: 100%;
+      border-radius: var(--radius);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight: 900;
+      font-size: 24px;
+      cursor:pointer;
+      user-select:none;
+      transition: color .15s ease;
+      color: var(--white);
+      z-index: 2;
+    }
 
-.toggle[data-value="B"] .toggleKnob{transform:translateX(100%)}
-.toggle[data-value="A"] .btnA,
-.toggle[data-value="B"] .btnB{color:var(--pink)}
+    .toggleKnob{
+      position:absolute;
+      top: 6px;
+      left: 6px;
+      width: calc(50% - 6px);
+      height: calc(100% - 12px);
+      background: var(--white);
+      border-radius: var(--radius);
+      transition: transform .18s ease;
+      box-shadow: 0 10px 20px rgba(0,0,0,.08);
+      z-index: 1;
+    }
 
-/* ADVANCED */
-details{
-  border:2px dashed rgba(230,0,122,.25);
-  border-radius:16px;
-  padding:10px 12px;
-}
+    .toggle[data-value="B"] .toggleKnob{ transform: translateX(100%); }
 
-summary{
-  font-weight:800;
-  cursor:pointer;
-  list-style:none;
-  display:flex;
-  justify-content:space-between;
-}
-summary::-webkit-details-marker{display:none}
+    /* Active label (on white) = pink; inactive label (on pink) = white */
+    .toggle[data-value="A"] .btnA,
+    .toggle[data-value="B"] .btnB{ color: var(--pink); }
+    .toggle[data-value="A"] .btnB,
+    .toggle[data-value="B"] .btnA{ color: var(--white); }
 
-summary::after{
-  content:"▾";
-  transition:.2s;
-}
-details[open] summary::after{transform:rotate(180deg)}
+    /* Bottom “advanced” panel */
+    details{
+      margin-top: 8px;
+      border: 2px dashed rgba(230,0,122,.25);
+      border-radius: 16px;
+      padding: 10px 12px;
+      color: var(--pink);
+    }
 
-.advGrid{
-  margin-top:10px;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
+    details summary{
+      cursor:pointer;
+      font-weight: 800;
+      letter-spacing:.2px;
+      list-style:none;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      user-select:none;
+    }
+    details summary::-webkit-details-marker{ display:none; }
+    details summary::after{
+      content:"▾";
+      font-size: 18px;
+      line-height: 1;
+      color: rgba(230,0,122,.85);
+      transition: transform .18s ease;
+    }
+    details[open] summary::after{ transform: rotate(180deg); }
 
-.advCard{
-  border:2px solid rgba(230,0,122,.18);
-  border-radius:14px;
-  padding:10px;
-  background:rgba(230,0,122,.03);
-}
+    .advGrid{
+      margin-top: 10px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
 
-.advTitle{font-weight:900;font-size:14px;margin-bottom:6px}
+    @media (max-width: 640px){
+      :root{
+        --w: 420px;
+        --rowH: 64px;
+        --rightW: 190px;
+      }
+      .pillLabel{ font-size: 22px; }
+      .pillValue{ font-size: 22px; }
+      .toggle{ width: 190px; }
+      .advGrid{ grid-template-columns: 1fr; }
+    }
 
-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:12px;
-}
+    .advCard{
+      border: 2px solid rgba(230,0,122,.18);
+      border-radius: 14px;
+      padding: 10px;
+      background: rgba(230,0,122,.03);
+    }
+    .advTitle{
+      font-weight: 900;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
 
-th,td{
-  padding:7px 5px;
-  border-bottom:1px solid rgba(230,0,122,.12);
-}
+    .advCard table{
+      width:100%;
+      border-collapse:collapse;
+      font-size: 12px;
+      color: #7a2a55;
+      table-layout: fixed; /* CRITICAL: stable column widths */
+    }
+    .advCard th, .advCard td{
+      text-align:left;
+      padding: 7px 5px;
+      border-bottom: 1px solid rgba(230,0,122,.12);
+      vertical-align: middle;
+    }
+    .advCard th{
+      font-weight: 900;
+      color: #a00057;
+    }
 
-th{font-weight:900;color:#a00057}
+    /* Start/End need to fit 1500+; £/asset is capped, so make Start/End wider */
+    .advCard th:nth-child(1), .advCard td:nth-child(1){ width: 38%; }
+    .advCard th:nth-child(2), .advCard td:nth-child(2){ width: 38%; }
+    .advCard th:nth-child(3), .advCard td:nth-child(3){ width: 24%; }
 
-/* FIXED NUMBER INPUTS (Safari-safe) */
-input.tier{
-  width:100%;
-  height:40px;
-  padding:6px 12px;
-  background:#fff;
-  border-radius:18px;
-  border:2px solid rgba(230,0,122,.20);
-  font-family:"Poppins",system-ui;
-  font-weight:700;
-  font-size:14px;
-  color:#5b5b5b;
-  text-align:center;
-  -webkit-appearance:none;
-  appearance:none;
-}
+    /* Matrix input pills (Safari/iOS safe + no truncation) */
+    input.tier{
+      width: 100%;
+      height: 40px;
+      padding: 6px 14px;
 
-input.tier::-webkit-inner-spin-button,
-input.tier::-webkit-outer-spin-button{
-  -webkit-appearance:none;
-  margin:0;
-}
+      background: #fff;
+      border-radius: 999px;
+      border: 2px solid rgba(230,0,122,.20);
+      outline:none;
 
-input.tier[type="number"]{
-  -moz-appearance:textfield;
-}
+      font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      font-weight: 700;
+      font-size: 14px;
+      color:#5b5b5b;
 
-.btnRow{display:flex;gap:8px;margin-top:8px}
-.smallBtn{
-  border-radius:999px;
-  border:2px solid rgba(230,0,122,.35);
-  background:rgba(230,0,122,.08);
-  font-weight:900;
-  padding:8px 10px;
-  cursor:pointer;
-  font-size:12px;
-}
-.note{font-size:11px;margin-top:8px}
-.error{display:none;color:#b0003b;font-weight:800;font-size:12px}
-</style>
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+      box-sizing: border-box;
+
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    /* Remove number spinners that break layout */
+    input.tier::-webkit-outer-spin-button,
+    input.tier::-webkit-inner-spin-button{
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input.tier[type="number"]{
+      -moz-appearance: textfield;
+    }
+
+    /* Ensure Start/End pills are never too narrow */
+    .advCard td:nth-child(1) input.tier,
+    .advCard td:nth-child(2) input.tier{
+      min-width: 110px;
+    }
+    .advCard td:nth-child(3) input.tier{
+      min-width: 90px;
+    }
+
+    .btnRow{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top: 8px;
+    }
+    .smallBtn{
+      border-radius: 999px;
+      border: 2px solid rgba(230,0,122,.35);
+      background: rgba(230,0,122,.08);
+      color: #a00057;
+      font-weight: 900;
+      padding: 8px 10px;
+      cursor:pointer;
+      font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      font-size: 12px;
+    }
+    .smallBtn:hover{ background: rgba(230,0,122,.12); }
+    .note{
+      margin-top: 8px;
+      font-size: 11px;
+      color: rgba(230,0,122,.72);
+      line-height: 1.35;
+    }
+    .error{
+      margin-top: 8px;
+      color: #b0003b;
+      font-weight: 800;
+      display:none;
+      font-size: 12px;
+    }
+  </style>
 </head>
 
 <body>
-<div class="wrap">
-<div class="titleCapsule">THE BABELATOR</div>
+  <div class="wrap">
+    <div class="titleCapsule">THE BABELATOR</div>
 
-<div class="stack">
+    <div class="stack">
+      <!-- MATRIX A OR B -->
+      <div class="pillRow">
+        <div class="matrixRow">
+          <div class="pillLabel">MATRIX A OR B</div>
 
-<div class="pillRow">
-  <div class="matrixRow">
-    <div class="pillLabel">MATRIX A OR B</div>
-    <div class="toggle" id="matrixToggle" data-value="A">
-      <div class="toggleKnob"></div>
-      <div class="toggleBtn btnA" data-set="A">A</div>
-      <div class="toggleBtn btnB" data-set="B">B</div>
+          <div class="toggle" id="matrixToggle" data-value="A" role="switch" aria-label="Matrix toggle">
+            <div class="toggleKnob" aria-hidden="true"></div>
+            <div class="toggleBtn btnA" data-set="A">A</div>
+            <div class="toggleBtn btnB" data-set="B">B</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NUMBER OF ASSETS -->
+      <div class="pillRow">
+        <div class="pillLabel">NUMBER OF ASSETS</div>
+        <div class="pillValue">
+          <input id="assetsInput" type="number" min="0" step="1" value="500" inputmode="numeric" />
+        </div>
+      </div>
+
+      <!-- TOTAL COST -->
+      <div class="pillRow">
+        <div class="pillLabel">TOTAL COST</div>
+        <div class="pillValue" id="totalOut">£0</div>
+      </div>
+
+      <!-- AVERAGE CPA -->
+      <div class="pillRow">
+        <div class="pillLabel">AVERAGE CPA</div>
+        <div class="pillValue" id="cpaOut">£0</div>
+      </div>
+
+      <!-- ADVANCED: EDIT MATRICES -->
+      <details>
+        <summary>Edit matrices</summary>
+
+        <div class="advGrid">
+          <div class="advCard">
+            <div class="advTitle">Matrix A (tiered, progressive)</div>
+            <table>
+              <thead>
+                <tr><th>Start</th><th>End</th><th>£/asset</th></tr>
+              </thead>
+              <tbody id="matrixA"></tbody>
+            </table>
+            <div class="btnRow">
+              <button class="smallBtn" data-add="A">+ Add tier</button>
+              <button class="smallBtn" data-reset="A">Reset A</button>
+            </div>
+          </div>
+
+          <div class="advCard">
+            <div class="advTitle">Matrix B (tiered, progressive)</div>
+            <table>
+              <thead>
+                <tr><th>Start</th><th>End</th><th>£/asset</th></tr>
+              </thead>
+              <tbody id="matrixB"></tbody>
+            </table>
+            <div class="btnRow">
+              <button class="smallBtn" data-add="B">+ Add tier</button>
+              <button class="smallBtn" data-reset="B">Reset B</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="note">
+          Pricing is applied “tax-style”: each tier only applies to the assets within its range.
+          Leave <b>End</b> blank for “no upper limit” (∞). Tiers must not overlap.
+        </div>
+        <div class="error" id="errBox">Fix matrix issues before totals can be calculated.</div>
+      </details>
     </div>
   </div>
-</div>
 
-<div class="pillRow">
-  <div class="pillLabel">NUMBER OF ASSETS</div>
-  <div class="pillValue"><input id="assetsInput" type="number" value="500"></div>
-</div>
+  <script>
+    // Matrix A
+    const DEFAULT_A = [
+      { start: 1, end: 25, rate: 345 },
+      { start: 26, end: 500, rate: 40 },
+      { start: 501, end: 1000, rate: 30 },
+      { start: 1001, end: 1500, rate: 22.5 },
+      { start: 1501, end: null, rate: 20 }
+    ];
 
-<div class="pillRow">
-  <div class="pillLabel">TOTAL COST</div>
-  <div class="pillValue" id="totalOut">£0</div>
-</div>
+    // Matrix B
+    const DEFAULT_B = [
+      { start: 1, end: 25, rate: 345 },
+      { start: 26, end: 500, rate: 45 },
+      { start: 501, end: 1000, rate: 35 },
+      { start: 1001, end: 1500, rate: 25 },
+      { start: 1501, end: null, rate: 20 }
+    ];
 
-<div class="pillRow">
-  <div class="pillLabel">AVERAGE CPA</div>
-  <div class="pillValue" id="cpaOut">£0</div>
-</div>
+    let matrixA = structuredClone(DEFAULT_A);
+    let matrixB = structuredClone(DEFAULT_B);
+    let selected = "A";
 
-<details>
-<summary>Edit matrices</summary>
+    const $ = (id) => document.getElementById(id);
 
-<div class="advGrid">
-  <div class="advCard">
-    <div class="advTitle">Matrix A</div>
-    <table><thead><tr><th>Start</th><th>End</th><th>£/asset</th></tr></thead><tbody id="matrixA"></tbody></table>
-    <div class="btnRow">
-      <button class="smallBtn" data-reset="A">Reset A</button>
-    </div>
-  </div>
+    function money(n){
+      if (!isFinite(n)) return "£—";
+      const v = Math.round(n * 100) / 100;
+      return "£" + v.toLocaleString(undefined, { maximumFractionDigits: 2 });
+    }
 
-  <div class="advCard">
-    <div class="advTitle">Matrix B</div>
-    <table><thead><tr><th>Start</th><th>End</th><th>£/asset</th></tr></thead><tbody id="matrixB"></tbody></table>
-    <div class="btnRow">
-      <button class="smallBtn" data-reset="B">Reset B</button>
-    </div>
-  </div>
-</div>
+    function isBlank(v){
+      return v === null || v === undefined || (typeof v === "string" && v.trim() === "");
+    }
 
-<div class="note">Pricing is applied “tax-style”.</div>
-<div class="error" id="errBox">Fix matrix issues.</div>
-</details>
+    function parseIntStrict(v){
+      if (typeof v === "number" && Number.isFinite(v)) return Math.trunc(v);
+      if (typeof v !== "string") v = String(v ?? "");
+      const s = v.trim();
+      if (s === "") return null;
+      if (!/^\d+$/.test(s)) return NaN;
+      return parseInt(s, 10);
+    }
 
-</div>
-</div>
+    function parseNumStrict(v){
+      if (typeof v === "number" && Number.isFinite(v)) return v;
+      if (typeof v !== "string") v = String(v ?? "");
+      const s = v.trim();
+      if (s === "") return null;
+      const n = Number(s);
+      return Number.isFinite(n) ? n : NaN;
+    }
 
-<script>
-const A=[
-{start:1,end:25,rate:345},
-{start:26,end:500,rate:40},
-{start:501,end:1000,rate:30},
-{start:1001,end:1500,rate:22.5},
-{start:1501,end:null,rate:20}
-];
-const B=[
-{start:1,end:25,rate:345},
-{start:26,end:500,rate:45},
-{start:501,end:1000,rate:35},
-{start:1001,end:1500,rate:25},
-{start:1501,end:null,rate:20}
-];
-let matrixA=structuredClone(A);
-let matrixB=structuredClone(B);
-let selected="A";
+    function validate(mat){
+      const errors = [];
 
-const $=id=>document.getElementById(id);
+      const cleaned = mat.map((t) => {
+        const start = parseIntStrict(t.start);
+        const end = isBlank(t.end) ? null : parseIntStrict(t.end);
+        const rate = parseNumStrict(t.rate);
 
-function money(n){return"£"+(Math.round(n*100)/100).toLocaleString()}
-function calc(n,m){
- let t=0;
- m.forEach(r=>{
-  const e=r.end??1e9;
-  const c=Math.max(0,Math.min(n,e)-r.start+1);
-  if(c>0)t+=c*r.rate;
- });
- return t;
-}
+        return { start, end, rate, rawEnd: t.end };
+      });
 
-function render(which){
- const t=$(which==="A"?"matrixA":"matrixB");
- const m=which==="A"?matrixA:matrixB;
- t.innerHTML="";
- m.forEach((r,i)=>{
-  t.insertAdjacentHTML("beforeend",`
-   <tr>
-    <td><input class="tier" type="number" value="${r.start}"></td>
-    <td><input class="tier" type="number" value="${r.end??""}"></td>
-    <td><input class="tier" type="number" value="${r.rate}"></td>
-   </tr>
-  `);
- });
-}
+      cleaned.forEach((t, idx) => {
+        if (!Number.isInteger(t.start) || t.start < 1){
+          errors.push(`Tier ${idx+1}: Start must be a positive integer.`);
+        }
+        if (t.end !== null){
+          if (!Number.isInteger(t.end)){
+            errors.push(`Tier ${idx+1}: End must be blank (∞) or a whole number.`);
+          } else if (t.end < t.start){
+            errors.push(`Tier ${idx+1}: End must be ≥ Start.`);
+          }
+        }
+        if (t.rate === null || Number.isNaN(t.rate) || t.rate < 0){
+          errors.push(`Tier ${idx+1}: £/asset must be a non-negative number.`);
+        }
+      });
 
-function recalc(){
- const n=+$("assetsInput").value||0;
- const m=selected==="A"?matrixA:matrixB;
- const total=calc(n,m);
- $("totalOut").textContent=money(total);
- $("cpaOut").textContent=money(n?total/n:0);
-}
+      // overlap check
+      const sorted = cleaned
+        .filter(t => Number.isInteger(t.start))
+        .slice()
+        .sort((a,b) => a.start - b.start);
 
-$("matrixToggle").onclick=e=>{
- const b=e.target.dataset.set;
- if(!b)return;
- selected=b;
- $("matrixToggle").dataset.value=b;
- recalc();
-};
+      for (let i=0; i<sorted.length-1; i++){
+        const a = sorted[i];
+        const b = sorted[i+1];
+        const aEnd = (a.end === null) ? Infinity : a.end;
+        if (b.start <= aEnd){
+          errors.push(`Tiers overlap: tier starting at ${b.start} begins before previous ends (${a.end ?? "∞"}).`);
+          break;
+        }
+      }
 
-$("assetsInput").oninput=recalc;
+      return { ok: errors.length === 0, errors };
+    }
 
-render("A");render("B");recalc();
-</script>
+    function calcTotal(assets, mat){
+      const n = Math.max(0, Math.trunc(Number(assets) || 0));
+      if (n === 0) return 0;
+
+      const sorted = mat
+        .map(t => ({
+          start: parseIntStrict(t.start),
+          end: isBlank(t.end) ? null : parseIntStrict(t.end),
+          rate: parseNumStrict(t.rate)
+        }))
+        .filter(t => Number.isInteger(t.start) && (t.end === null || Number.isInteger(t.end)) && Number.isFinite(t.rate))
+        .sort((a,b) => a.start - b.start);
+
+      let total = 0;
+      for (const t of sorted){
+        const start = t.start;
+        const end = (t.end === null ? Infinity : t.end);
+        const inTier = Math.max(0, Math.min(n, end) - start + 1);
+        if (inTier > 0) total += inTier * t.rate;
+      }
+      return total;
+    }
+
+    function renderMatrix(which){
+      const tbody = $(which === "A" ? "matrixA" : "matrixB");
+      const mat = which === "A" ? matrixA : matrixB;
+      tbody.innerHTML = "";
+
+      mat.forEach((t, idx) => {
+        const tr = document.createElement("tr");
+
+        // Start + Rate are numbers.
+        // End is TEXT so the ∞ placeholder actually shows and you can leave it blank for "no upper limit".
+        tr.innerHTML = `
+          <td><input class="tier" type="number" min="1" step="1" value="${t.start}" data-m="${which}" data-i="${idx}" data-f="start"></td>
+          <td><input class="tier" type="text" inputmode="numeric" pattern="[0-9]*" value="${t.end ?? ""}" placeholder="∞" data-m="${which}" data-i="${idx}" data-f="end"></td>
+          <td><input class="tier" type="number" min="0" step="0.01" value="${t.rate}" data-m="${which}" data-i="${idx}" data-f="rate"></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      tbody.querySelectorAll("input.tier").forEach(inp => {
+        inp.addEventListener("input", (e) => {
+          const m = e.target.dataset.m;
+          const i = Number(e.target.dataset.i);
+          const f = e.target.dataset.f;
+          const v = e.target.value;
+
+          const target = (m === "A") ? matrixA : matrixB;
+          target[i][f] = (f === "end" && v.trim() === "") ? null : v;
+
+          recalc();
+        });
+      });
+    }
+
+    function showErrors(errors){
+      const box = $("errBox");
+      if (!errors.length){
+        box.style.display = "none";
+        box.textContent = "Fix matrix issues before totals can be calculated.";
+        return;
+      }
+      box.style.display = "block";
+      box.textContent = errors[0]; // keep it simple: show first error only
+    }
+
+    function recalc(){
+      const assets = $("assetsInput").value;
+      const mat = (selected === "A") ? matrixA : matrixB;
+
+      const v = validate(mat);
+      showErrors(v.errors);
+
+      if (!v.ok){
+        $("totalOut").textContent = "£—";
+        $("cpaOut").textContent = "£—";
+        return;
+      }
+
+      const total = calcTotal(assets, mat);
+      const n = Math.max(0, Math.trunc(Number(assets) || 0));
+      const cpa = (n > 0) ? (total / n) : 0;
+
+      $("totalOut").textContent = money(total);
+      $("cpaOut").textContent = money(cpa);
+    }
+
+    function setSelected(val){
+      selected = val;
+      $("matrixToggle").dataset.value = val;
+      recalc();
+    }
+
+    $("matrixToggle").addEventListener("click", (e) => {
+      const btn = e.target.closest(".toggleBtn");
+      if (!btn) return;
+      setSelected(btn.dataset.set);
+    });
+
+    $("assetsInput").addEventListener("input", recalc);
+
+    document.querySelectorAll("[data-add]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const which = btn.dataset.add;
+        const mat = (which === "A") ? matrixA : matrixB;
+
+        // sensible default new tier
+        const last = mat.slice().sort((a,b) => parseIntStrict(a.start) - parseIntStrict(b.start)).at(-1);
+        const nextStart = last ? (parseIntStrict(last.end ?? last.start) + 1 || (parseIntStrict(last.start) + 1)) : 1;
+
+        mat.push({ start: nextStart, end: null, rate: 0 });
+        renderMatrix(which);
+        recalc();
+      });
+    });
+
+    document.querySelectorAll("[data-reset]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const which = btn.dataset.reset;
+        if (which === "A") matrixA = structuredClone(DEFAULT_A);
+        if (which === "B") matrixB = structuredClone(DEFAULT_B);
+        renderMatrix(which);
+        recalc();
+      });
+    });
+
+    // init
+    renderMatrix("A");
+    renderMatrix("B");
+    setSelected("A");
+    recalc();
+  </script>
 </body>
 </html>
