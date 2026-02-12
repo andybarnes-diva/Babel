@@ -74,13 +74,17 @@
       box-shadow: var(--shadow);
       display:flex;
       align-items:center;
+
+      /* KEY FIX: match right padding to left so the white capsule optically centres */
       padding-left: var(--rowPadX);
-      padding-right: 10px;
+      padding-right: var(--rowPadX);
+
       overflow:hidden;
     }
 
+    /* Lozenge label weight should be 600 */
     .pillLabel{
-      font-weight: 900;
+      font-weight: 600;   /* was 900 */
       color: var(--white);
       font-size: 26px;
       letter-spacing: .3px;
@@ -92,7 +96,6 @@
     /* White value capsule on the right */
     .pillValue{
       margin-left:auto;
-      margin-right: 4px; /* optical fix: nudge left so right outline looks even */
       height: calc(var(--rowH) - 12px);
       width: min(280px, var(--rightW));
       background: var(--white);
@@ -103,7 +106,8 @@
       padding: 0 16px;
       border: var(--stroke) solid var(--pink);
       color: var(--grey);
-      font-weight: 900;
+
+      font-weight: 600;  /* was 900 */
       font-size: 26px;
       line-height:1;
     }
@@ -118,6 +122,16 @@
       background: transparent;
       -webkit-appearance: none;
       appearance: none;
+    }
+
+    /* Remove number spinners (iOS/Chrome) */
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button{
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input[type="number"]{
+      -moz-appearance: textfield;
     }
 
     /* Pricing Matrix panel */
@@ -174,8 +188,8 @@
       align-items:center;
     }
 
-    /* Rectangular “field” look for matrix display */
-    .tierBox{
+    /* Editable matrix fields */
+    input.tier{
       width: 100%;
       height: var(--fieldH);
       padding: 8px 10px;
@@ -183,22 +197,48 @@
 
       border-radius: var(--fieldR);
       border: var(--fieldB) solid rgba(230,0,122,.20);
+      outline:none;
 
       font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       font-weight: 700;
       font-size: 14px;
       color:#5b5b5b;
 
-      display:flex;
-      align-items:center;
-      justify-content:flex-start;
-
+      text-align: left;
       font-variant-numeric: tabular-nums;
+
+      -webkit-appearance: none;
+      appearance: none;
       box-sizing: border-box;
-      user-select: none;
     }
 
-    .tierBox.right{ justify-content:flex-end; }
+    /* Make End and £/asset feel right-aligned like your mock */
+    .tier.end, .tier.rate { text-align: right; }
+
+    input.tier::placeholder{
+      color: rgba(91,91,91,.55);
+      font-weight: 700;
+    }
+
+    .btnRow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 14px;
+    }
+
+    .smallBtn{
+      border-radius: 999px;
+      border: 2px solid rgba(230,0,122,.35);
+      background: rgba(230,0,122,.08);
+      color: #a00057;
+      font-weight: 900;
+      padding: 10px 14px;
+      cursor:pointer;
+      font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      font-size: 12px;
+    }
+    .smallBtn:hover{ background: rgba(230,0,122,.12); }
 
     .note{
       margin-top: 10px;
@@ -276,11 +316,16 @@
           <div class="matrixGridHead">
             <div>Start</div><div>End</div><div>£/asset</div>
           </div>
+
           <div class="matrixRows" id="matrix"></div>
+
+          <div class="btnRow">
+            <button class="smallBtn" id="resetMatrixBtn">Reset Matrix</button>
+          </div>
 
           <div class="note">
             Pricing is applied “tax-style”: each tier only applies to the assets within its range.
-            The final tier has no upper limit.
+            Leave End blank for “no upper limit” (∞). Tiers must not overlap.
           </div>
 
           <div class="error" id="errBox">Fix matrix issues before totals can be calculated.</div>
@@ -290,8 +335,8 @@
   </div>
 
   <script>
-    // Locked pricing matrix (tax-style / progressive)
-    const PRICING_MATRIX = [
+    // Default pricing matrix (editable, single matrix)
+    const DEFAULT_MATRIX = [
       { start: 1,    end: 25,   rate: 345 },
       { start: 26,   end: 250,  rate: 45  },
       { start: 251,  end: 500,  rate: 40  },
@@ -301,6 +346,8 @@
       { start: 1251, end: 1500, rate: 22  },
       { start: 1501, end: null, rate: 20  }
     ];
+
+    let matrix = structuredClone(DEFAULT_MATRIX);
 
     const $ = (id) => document.getElementById(id);
 
@@ -401,7 +448,6 @@
     async function getGBPtoUSD(){
       if (fxGBPtoUSD) return fxGBPtoUSD;
       try {
-        // Base USD; invert GBP to get GBP->USD
         const res = await fetch("https://open.er-api.com/v6/latest/USD", { cache: "no-store" });
         const data = await res.json();
         const usdToGbp = data?.rates?.GBP;
@@ -418,20 +464,26 @@
       const host = $("matrix");
       host.innerHTML = "";
 
-      PRICING_MATRIX.forEach((t) => {
+      matrix.forEach((t, idx) => {
         const row = document.createElement("div");
         row.className = "matrixRowItem";
-
-        const start = String(t.start);
-        const end = (t.end === null ? "∞" : String(t.end));
-        const rate = String(t.rate);
-
         row.innerHTML = `
-          <div class="tierBox">${start}</div>
-          <div class="tierBox right">${end}</div>
-          <div class="tierBox right">£${rate}</div>
+          <input class="tier start" type="number" min="1" step="1" value="${t.start}" data-i="${idx}" data-f="start">
+          <input class="tier end" type="text" inputmode="numeric" pattern="[0-9]*" value="${t.end ?? ""}" placeholder="∞" data-i="${idx}" data-f="end">
+          <input class="tier rate" type="number" min="0" step="0.01" value="${t.rate}" data-i="${idx}" data-f="rate">
         `;
         host.appendChild(row);
+      });
+
+      host.querySelectorAll("input.tier").forEach(inp => {
+        inp.addEventListener("input", (e) => {
+          const i = Number(e.target.dataset.i);
+          const f = e.target.dataset.f;
+          const v = e.target.value;
+
+          matrix[i][f] = (f === "end" && String(v).trim() === "") ? null : v;
+          recalc();
+        });
       });
     }
 
@@ -449,7 +501,7 @@
     async function recalc(){
       const assets = $("assetsInput").value;
 
-      const v = validate(PRICING_MATRIX);
+      const v = validate(matrix);
       showErrors(v.errors);
 
       if (!v.ok){
@@ -460,7 +512,7 @@
         return;
       }
 
-      const totalGBP = calcTotal(assets, PRICING_MATRIX);
+      const totalGBP = calcTotal(assets, matrix);
       const n = Math.max(0, Math.trunc(Number(assets) || 0));
       const cpaGBP = (n > 0) ? (totalGBP / n) : 0;
 
@@ -479,6 +531,12 @@
     }
 
     $("assetsInput").addEventListener("input", () => recalc());
+
+    $("resetMatrixBtn").addEventListener("click", () => {
+      matrix = structuredClone(DEFAULT_MATRIX);
+      renderMatrix();
+      recalc();
+    });
 
     // init
     renderMatrix();
