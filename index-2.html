@@ -65,64 +65,66 @@
 
     .stack{ display:flex; flex-direction:column; gap: var(--gap); }
 
-    /* Big pink rows */
-    .pillRow{
-      position:relative;
-      height: var(--rowH);
-      border-radius: var(--radius);
-      background: var(--pink);
-      box-shadow: var(--shadow);
-      display:flex;
-      align-items:center;
+ /* Big pink rows */
+.pillRow{
+  position:relative;
+  height: var(--rowH);
+  border-radius: var(--radius);
+  background: var(--pink);
+  box-shadow: var(--shadow);
+  display:flex;
+  align-items:center;
 
-      /* KEY FIX: match right padding to left so the white capsule optically centres */
-      padding-left: var(--rowPadX);
-      padding-right: calc(var(--rowPadX) + 6px);
+  /* Keep padding symmetric */
+  padding-left: var(--rowPadX);
+  padding-right: var(--rowPadX);
 
-      overflow:hidden;
-    }
+  overflow:hidden;
+}
 
-    /* Lozenge label weight should be 600 */
-    .pillLabel{
-      font-weight: 600;   /* was 900 */
-      color: var(--white);
-      font-size: 26px;
-      letter-spacing: .3px;
-      line-height: 1;
-      user-select:none;
-      white-space: nowrap;
-    }
+/* Lozenge label weight should be 600 */
+.pillLabel{
+  font-weight: 600;
+  color: var(--white);
+  font-size: 26px;
+  letter-spacing: .3px;
+  line-height: 1;
+  user-select:none;
+  white-space: nowrap;
+}
 
-    /* White value capsule on the right */
-    .pillValue{
-      margin-left:auto;
-      height: calc(var(--rowH) - 12px);
-      width: min(280px, var(--rightW));
-      background: var(--white);
-      border-radius: var(--radius);
-      display:flex;
-      align-items:center;
-      justify-content:flex-end;
-      padding: 0 16px;
-      border: var(--stroke) solid var(--pink);
-      color: var(--grey);
+/* White value capsule on the right */
+.pillValue{
+  margin-left: auto;
+  margin-right: -4px; /* ← THIS moves the lozenge RIGHT */
 
-      font-weight: 600;  /* was 900 */
-      font-size: 26px;
-      line-height:1;
-    }
+  height: calc(var(--rowH) - 12px);
+  width: min(280px, var(--rightW));
+  background: var(--white);
+  border-radius: var(--radius);
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  padding: 0 16px;
+  border: var(--stroke) solid var(--pink);
+  color: var(--grey);
 
-    .pillValue input{
-      width:100%;
-      border:none;
-      outline:none;
-      font: inherit;
-      color: var(--grey);
-      text-align:right;
-      background: transparent;
-      -webkit-appearance: none;
-      appearance: none;
-    }
+  font-weight: 600;
+  font-size: 26px;
+  line-height:1;
+}
+
+.pillValue input{
+  width:100%;
+  border:none;
+  outline:none;
+  font: inherit;
+  color: var(--grey);
+  text-align:right;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+}
 
     /* Remove number spinners (iOS/Chrome) */
     input[type="number"]::-webkit-outer-spin-button,
